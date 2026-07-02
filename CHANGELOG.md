@@ -3,6 +3,7 @@
 
 ### Added
 - File Browser now indexes large SD-card folders so directories with many books can be browsed without loading every filename into memory at once.
+- Hardcover integration: API-key import/auth in Settings, Hardcover library screen on Home, in-reader book linking/status/progress/rating actions, and optional auto-sync-on-close with a configurable threshold.
 - EPUB text clipping with saved highlights, clipping lists, and Kindle-style `/My Clippings.txt` export.
 - `Create Clipping` is now available as a reader shortcut for short/long Power, long-press Menu, and long-press Back actions.
 - Per-book EPUB options for font, layout, styling, reading aids, and render modes, including `CrossInk Default`, `Balanced`, and `Light` modes for difficult books.
