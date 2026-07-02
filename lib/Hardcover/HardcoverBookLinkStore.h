@@ -5,6 +5,7 @@
 struct HardcoverBookLink {
   std::string path;
   int bookId = 0;
+  int statusId = 0;
   int lastSyncedProgress = -1;
   bool autoSync = false;
   std::string title;
@@ -25,6 +26,7 @@ class HardcoverBookLinkStore {
   bool getLink(const std::string& path, HardcoverBookLink& out) const;
   bool setLink(const std::string& path, int bookId, const std::string& title) const;
   bool setAutoSync(const std::string& path, bool enabled) const;
+  bool updateLastStatus(const std::string& path, int statusId) const;
   bool updateLastSyncedProgress(const std::string& path, int progressPercent) const;
 };
 

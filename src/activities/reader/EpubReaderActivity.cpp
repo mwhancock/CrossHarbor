@@ -3391,6 +3391,9 @@ void EpubReaderActivity::syncHardcoverOnClose(int progressPercent) {
   if (stats.isCompleted) {
     error = HardcoverClient::upsertBookStatus(link.bookId, 3);
     progressPercent = 100;
+    if (error == HardcoverClient::OK) {
+      HARDCOVER_LINKS.updateLastStatus(epub->getPath(), 3);
+    }
   }
   if (error == HardcoverClient::OK) {
     error = HardcoverClient::updateProgress(link.bookId, progressPercent);

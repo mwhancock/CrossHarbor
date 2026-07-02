@@ -60,6 +60,7 @@ void HardcoverBookActivity::onEnter() {
   HardcoverBookLink link;
   if (HARDCOVER_LINKS.getLink(epubPath, link)) {
     bookId = link.bookId;
+    statusId = link.statusId;
     autoSync = link.autoSync;
     lastSyncedProgress = link.lastSyncedProgress;
   }
@@ -184,6 +185,7 @@ void HardcoverBookActivity::handleLinkInput(const std::string& input) {
     if (error == HardcoverClient::OK && searchResult.bookId > 0 &&
         HARDCOVER_LINKS.setLink(epubPath, searchResult.bookId, title)) {
       bookId = searchResult.bookId;
+      statusId = 0;
       autoSync = false;
       lastSyncedProgress = -1;
       GUI.drawPopup(renderer, tr(STR_HARDCOVER_AUTO_LINKED));
@@ -199,6 +201,7 @@ void HardcoverBookActivity::handleLinkInput(const std::string& input) {
     const int id = std::atoi(input.c_str());
     if (id > 0 && HARDCOVER_LINKS.setLink(epubPath, id, title)) {
       bookId = id;
+      statusId = 0;
       autoSync = false;
       lastSyncedProgress = -1;
     }
@@ -244,6 +247,7 @@ void HardcoverBookActivity::confirmSearchResult() {
   const HardcoverBookSearchResult& result = searchResults[selectedSearchIndex];
   if (result.bookId > 0 && HARDCOVER_LINKS.setLink(epubPath, result.bookId, title)) {
     bookId = result.bookId;
+    statusId = 0;
     autoSync = false;
     lastSyncedProgress = -1;
     selectingSearchResult = false;
@@ -298,10 +302,18 @@ void HardcoverBookActivity::runManualSync(Action action, int rating) {
   char errorBuffer[128];
   GUI.drawPopup(renderer, error == HardcoverClient::OK ? tr(STR_HARDCOVER_SYNCED)
                                                        : hardcoverErrorMessage(error, errorBuffer, sizeof(errorBuffer)));
-  if (error == HardcoverClient::OK && (action == UpdateProgress || action == MarkRead)) {
-    const int syncedProgress = action == MarkRead ? 100 : progressPercent;
-    if (HARDCOVER_LINKS.updateLastSyncedProgress(epubPath, syncedProgress)) {
-      lastSyncedProgress = syncedProgress;
+  if (error == HardcoverClient::OK) {
+    if (action == MarkReading || action == MarkRead) {
+      const int nextStatusId = action == MarkRead ? 3 : 2;
+      if (HARDCOVER_LINKS.updateLastStatus(epubPath, nextStatusId)) {
+        statusId = nextStatusId;
+      }
+    }
+    if (action == UpdateProgress || action == MarkRead) {
+      const int syncedProgress = action == MarkRead ? 100 : progressPercent;
+      if (HARDCOVER_LINKS.updateLastSyncedProgress(epubPath, syncedProgress)) {
+        lastSyncedProgress = syncedProgress;
+      }
     }
   }
   requestUpdate();
@@ -361,6 +373,8 @@ void HardcoverBookActivity::render(RenderLock&&) {
         if (index == UpdateProgress) return std::to_string(progressPercent) + "%";
         if (index == LinkBook && bookId > 0) return std::to_string(bookId);
         if (index == AutoSync) return std::string(autoSync ? tr(STR_STATE_ON) : tr(STR_STATE_OFF));
+        if (index == MarkReading) return std::string(statusId == 2 ? "[x]" : "[ ]");
+        if (index == MarkRead) return std::string(statusId == 3 ? "[x]" : "[ ]");
         return std::string("");
       },
       true);

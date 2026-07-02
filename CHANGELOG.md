@@ -38,6 +38,7 @@
 - Footnotes in EPUBs with very large shared notes sections no longer cause long stalls when opened.
 - Firmware updates now follow GitHub asset redirects before streaming the install.
 - Tiled grayscale rendering now serializes display transfers on the shared SPI bus to avoid display glitches during SD activity.
+- Hardcover in-reader actions now show persistent `[x]/[ ]` state markers for `Mark Currently Reading` and `Mark Read`.
 
 ## [v1.3.3] - 2026-06-13
 

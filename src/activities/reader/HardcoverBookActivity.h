@@ -41,6 +41,7 @@ class HardcoverBookActivity final : public Activity {
   std::string author;
   int progressPercent;
   int bookId = 0;
+  int statusId = 0;
   int lastSyncedProgress = -1;
   bool autoSync = false;
   bool selectingSearchResult = false;

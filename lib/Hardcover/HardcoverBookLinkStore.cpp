@@ -66,6 +66,7 @@ bool HardcoverBookLinkStore::getLink(const std::string& path, HardcoverBookLink&
     if (path == storedPath) {
       out.path = storedPath;
       out.bookId = link["bookId"] | 0;
+      out.statusId = link["statusId"] | 0;
       out.lastSyncedProgress = link["lastSyncedProgress"] | -1;
       out.autoSync = link["autoSync"] | false;
       out.title = link["title"] | std::string("");
@@ -88,6 +89,8 @@ bool HardcoverBookLinkStore::setLink(const std::string& path, int bookId, const 
   JsonObject link = findLink(links, path);
   if (!link.isNull()) {
     link["bookId"] = bookId;
+    link["statusId"] = 0;
+    link["lastSyncedProgress"] = -1;
     link["title"] = title;
     return saveLinksDocument(doc);
   }
@@ -95,6 +98,7 @@ bool HardcoverBookLinkStore::setLink(const std::string& path, int bookId, const 
   JsonObject newLink = links.add<JsonObject>();
   newLink["path"] = path;
   newLink["bookId"] = bookId;
+  newLink["statusId"] = 0;
   newLink["autoSync"] = false;
   newLink["lastSyncedProgress"] = -1;
   newLink["title"] = title;
@@ -110,6 +114,20 @@ bool HardcoverBookLinkStore::setAutoSync(const std::string& path, bool enabled) 
   JsonObject link = findLink(links, path);
   if (!link.isNull()) {
     link["autoSync"] = enabled;
+    return saveLinksDocument(doc);
+  }
+  return false;
+}
+
+bool HardcoverBookLinkStore::updateLastStatus(const std::string& path, int statusId) const {
+  if (statusId < 0) statusId = 0;
+  JsonDocument doc;
+  if (!loadLinksDocument(doc)) return false;
+
+  JsonArray links = ensureLinksArray(doc);
+  JsonObject link = findLink(links, path);
+  if (!link.isNull()) {
+    link["statusId"] = statusId;
     return saveLinksDocument(doc);
   }
   return false;
