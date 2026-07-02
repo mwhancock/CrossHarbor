@@ -209,6 +209,8 @@ bool JsonSettingsIO::saveSettings(const CrossPointSettings& s, const char* path)
   // Language -- managed by LanguageSelectActivity, not in SettingsList.
   // Stored as ISO code string ("EN", "DE", ...) for stability across enum reorders.
   doc["language"] = (s.language < getLanguageCount()) ? LANGUAGE_CODES[s.language] : "EN";
+  doc["hardcoverAutoSyncThresholdPercent"] =
+      CrossPointSettings::normalizeHardcoverAutoSyncThreshold(s.hardcoverAutoSyncThresholdPercent);
   doc["tiltPageTurnDirectionSchema"] = TILT_DIRECTION_SCHEMA_CURRENT;
   // Separate from the legacy clock sync flag because older builds synced time
   // only, leaving the RTC date registers at their placeholder/default value.
@@ -408,6 +410,8 @@ bool JsonSettingsIO::loadSettings(CrossPointSettings& s, const char* json, bool*
   if (doc["language"].is<const char*>()) {
     s.language = static_cast<uint8_t>(I18n::languageFromCode(doc["language"].as<const char*>()));
   }
+  s.hardcoverAutoSyncThresholdPercent = CrossPointSettings::normalizeHardcoverAutoSyncThreshold(
+      doc["hardcoverAutoSyncThresholdPercent"] | s.hardcoverAutoSyncThresholdPercent);
   s.clockDateHasBeenSynced = clamp(doc["clockDateHasBeenSynced"] | (uint8_t)0, (uint8_t)2, (uint8_t)0);
 
   LOG_DBG("CPS", "Settings loaded from file");

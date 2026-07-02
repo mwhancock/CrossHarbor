@@ -309,6 +309,7 @@ class CrossPointSettings {
   uint8_t statusBarTitle = CHAPTER_TITLE;
   uint8_t statusBarTimeLeft = TIME_LEFT_HIDE;
   uint8_t statusBarBattery = 1;
+  uint8_t hardcoverAutoSyncThresholdPercent = 1;
   uint8_t xtcStatusBarMode = XTC_STATUS_BAR_HIDE;
   // Clock visibility mode (X3 only, requires DS3231 RTC)
   uint8_t hideClock = HIDE_CLOCK_ALWAYS;
@@ -519,6 +520,7 @@ class CrossPointSettings {
   static uint8_t sleepScreenModeToStorage(uint8_t mode);
   static uint8_t legacyLineSpacingToPercent(uint8_t legacyValue, uint8_t fontFamily, bool sdFontSelected);
   static uint8_t clampedLineHeightPercent(uint8_t value);
+  static uint8_t normalizeHardcoverAutoSyncThreshold(uint8_t value);
   static uint8_t readingIdleTimeThresholdUnitsForSeconds(uint16_t seconds);
   static uint16_t readingIdleTimeThresholdSecondsForUnits(uint8_t units);
 #ifdef SIMULATOR

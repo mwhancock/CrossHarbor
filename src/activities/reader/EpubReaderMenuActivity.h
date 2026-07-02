@@ -26,6 +26,7 @@ class EpubReaderMenuActivity final : public Activity {
     DISPLAY_QR,
     GO_HOME,
     SYNC,
+    HARDCOVER,
     DELETE_STATS,
     DELETE_CACHE,
     RESET_READING_PACE,

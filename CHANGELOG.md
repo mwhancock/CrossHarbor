@@ -3,6 +3,7 @@
 
 ### Added
 - File Browser now indexes large SD-card folders so directories with many books can be browsed without loading every filename into memory at once.
+- Hardcover integration: API-key import/auth in Settings, Hardcover library screen on Home, in-reader book linking/status/progress/rating actions, and optional auto-sync-on-close with a configurable threshold.
 - EPUB text clipping with saved highlights, clipping lists, and Kindle-style `/My Clippings.txt` export.
 - `Create Clipping` is now available as a reader shortcut for short/long Power, long-press Menu, and long-press Back actions.
 - Per-book EPUB options for font, layout, styling, reading aids, and render modes, including `CrossInk Default`, `Balanced`, and `Light` modes for difficult books.
@@ -37,6 +38,7 @@
 - Footnotes in EPUBs with very large shared notes sections no longer cause long stalls when opened.
 - Firmware updates now follow GitHub asset redirects before streaming the install.
 - Tiled grayscale rendering now serializes display transfers on the shared SPI bus to avoid display glitches during SD activity.
+- Hardcover in-reader actions now show persistent `[x]/[ ]` state markers for `Mark Currently Reading` and `Mark Read`.
 
 ## [v1.3.3] - 2026-06-13
 

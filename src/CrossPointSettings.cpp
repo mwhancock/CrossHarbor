@@ -360,6 +360,21 @@ uint8_t CrossPointSettings::clampedLineHeightPercent(const uint8_t value) {
   return value;
 }
 
+uint8_t CrossPointSettings::normalizeHardcoverAutoSyncThreshold(const uint8_t value) {
+  constexpr uint8_t thresholds[] = {1, 5, 10, 15};
+  uint8_t best = thresholds[0];
+  uint8_t bestDiff = UINT8_MAX;
+  for (const uint8_t threshold : thresholds) {
+    const uint8_t diff = threshold > value ? static_cast<uint8_t>(threshold - value)
+                                           : static_cast<uint8_t>(value - threshold);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      best = threshold;
+    }
+  }
+  return best;
+}
+
 uint8_t CrossPointSettings::readingIdleTimeThresholdUnitsForSeconds(const uint16_t seconds) {
   const uint16_t clampedSeconds =
       std::clamp(seconds, MIN_READING_IDLE_TIME_THRESHOLD_SECONDS, MAX_READING_IDLE_TIME_THRESHOLD_SECONDS);
