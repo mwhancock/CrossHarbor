@@ -3345,23 +3345,10 @@ void EpubReaderActivity::setBookCompleted(bool isCompleted) {
 
 void EpubReaderActivity::openHardcoverMenu() {
   int progressPercent = 0;
-  int currentPage = nextPageNumber;
   if (epub) {
-    if (section) {
-      currentPage = section->currentPage;
-    }
     progressPercent = clampPercent(static_cast<int>(getCurrentBookProgressPercent() + 0.5f));
   }
-
-  {
-    RenderLock lock(*this);
-    if (section) {
-      nextPageNumber = section->currentPage;
-      section.reset();
-    } else {
-      nextPageNumber = currentPage;
-    }
-  }
+  releaseReaderSdFontCachesForLowMemory(renderer, "HDC", "Hardcover request");
 
   startActivityForResult(
       std::make_unique<HardcoverBookActivity>(renderer, mappedInput, epub ? epub->getPath() : std::string{},

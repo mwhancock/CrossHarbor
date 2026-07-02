@@ -522,8 +522,8 @@ HardcoverClient::Error postGraphql(const char* query, String& responseBody) {
   config.user_data = &response;
   config.method = HTTP_METHOD_POST;
   config.timeout_ms = 15000;
-  config.buffer_size = 2048;
-  config.buffer_size_tx = 2048;
+  config.buffer_size = 1024;
+  config.buffer_size_tx = 1024;
   config.crt_bundle_attach = esp_crt_bundle_attach;
 
   esp_http_client_handle_t client = esp_http_client_init(&config);
