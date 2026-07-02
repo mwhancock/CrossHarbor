@@ -3392,14 +3392,18 @@ void EpubReaderActivity::syncHardcoverOnClose(int progressPercent) {
     error = HardcoverClient::upsertBookStatus(link.bookId, 3);
     progressPercent = 100;
     if (error == HardcoverClient::OK) {
-      HARDCOVER_LINKS.updateLastStatus(epub->getPath(), 3);
+      if (!HARDCOVER_LINKS.updateLastStatus(epub->getPath(), 3)) {
+        LOG_ERR("HDC", "Failed to persist Hardcover status for %s", epub->getPath().c_str());
+      }
     }
   }
   if (error == HardcoverClient::OK) {
     error = HardcoverClient::updateProgress(link.bookId, progressPercent);
   }
   if (error == HardcoverClient::OK) {
-    HARDCOVER_LINKS.updateLastSyncedProgress(epub->getPath(), progressPercent);
+    if (!HARDCOVER_LINKS.updateLastSyncedProgress(epub->getPath(), progressPercent)) {
+      LOG_ERR("HDC", "Failed to persist Hardcover synced progress for %s", epub->getPath().c_str());
+    }
   } else {
     LOG_ERR("HDC", "Auto-sync on close failed: %s", HardcoverClient::errorString(error));
   }
