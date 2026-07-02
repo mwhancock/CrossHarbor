@@ -46,7 +46,7 @@ StrId hardcoverErrorLabelId(const HardcoverClient::Error error) {
 }
 
 const char* hardcoverErrorMessage(HardcoverClient::Error error, char* buffer, const size_t bufferSize) {
-  const char* label = tr(hardcoverErrorLabelId(error));
+  const char* label = I18N.get(hardcoverErrorLabelId(error));
   if (!HardcoverClient::lastErrorDetail()[0]) return label;
   snprintf(buffer, bufferSize, "%s: %s", label, HardcoverClient::lastErrorDetail());
   return buffer;
