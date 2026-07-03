@@ -1,6 +1,6 @@
 # CrossInk Hardcover Fork
 
-Personal firmware fork for the Xteink X3/X4 based on **[CrossInk](https://github.com/uxjulia/crossink)**, with selected features from **[CrossCover](https://github.com/StefanTsonev/CrossCover)** for integration with **Hardcover.app**.
+Personal firmware fork for the Xteink X3/X4 based on **[CrossInk](https://github.com/uxjulia/crossink)**, with selected features from **[CrossCover](https://github.com/StefanTsonev/CrossCover)** for integration with **[Hardcover.app](https://hardcover.app/)**.
 
 ## Goal and scope
 
