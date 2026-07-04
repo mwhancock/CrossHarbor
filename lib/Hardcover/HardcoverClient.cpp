@@ -357,14 +357,62 @@ HardcoverClient::Error parseBookSearch(const char* body, const char* expectedTit
 
   String detailsBody;
   HardcoverClient::Error err = postGraphql(query, detailsBody);
-  if (err != HardcoverClient::OK) return err;
-
-  JsonDocument detailsDoc;
   JsonDocument detailsFilter;
   detailsFilter["data"]["books"][0]["id"] = true;
   detailsFilter["data"]["books"][0]["title"] = true;
   detailsFilter["data"]["books"][0]["compilation"] = true;
   detailsFilter["errors"][0]["message"] = true;
+  if (err == HardcoverClient::LOW_MEMORY && responseWasTooLarge() && idCount > 1) {
+    for (JsonVariantConst idValue : ids) {
+      const int singleId = parseBookId(idValue);
+      if (singleId <= 0) continue;
+
+      const int fallbackLen = snprintf(query, sizeof(query),
+                                       "query { books(where: {id: {_in: [%d]}}, limit: 1) { id title compilation } }",
+                                       singleId);
+      if (fallbackLen <= 0 || static_cast<size_t>(fallbackLen) >= sizeof(query)) return HardcoverClient::LOW_MEMORY;
+
+      String singleBody;
+      const HardcoverClient::Error singleErr = postGraphql(query, singleBody);
+      if (singleErr != HardcoverClient::OK) return singleErr;
+
+      JsonDocument singleDoc;
+      const DeserializationError singleJsonError =
+          deserializeJson(singleDoc, singleBody.c_str(), DeserializationOption::Filter(detailsFilter));
+      if (singleJsonError) {
+        setLastErrorDetail("Invalid book detail response");
+        return HardcoverClient::JSON_ERROR;
+      }
+      if (hasGraphqlErrors(singleDoc)) {
+        setGraphqlErrorDetail(singleDoc, "GraphQL book detail error");
+        return HardcoverClient::API_ERROR;
+      }
+
+      JsonObjectConst book = singleDoc["data"]["books"][0];
+      if (book.isNull()) continue;
+      const char* title = book["title"] | "";
+      const bool compilation = book["compilation"] | false;
+      if (looksLikeSetTitle(title, compilation)) continue;
+
+      HardcoverBookSearchResult result;
+      result.bookId = singleId;
+      result.title = title;
+      if (titlesMatchClosely(expectedTitle, title)) {
+        outBooks.insert(outBooks.begin(), result);
+      } else {
+        outBooks.push_back(result);
+      }
+      if (static_cast<int>(outBooks.size()) >= limit) break;
+    }
+    if (outBooks.empty()) {
+      setLastErrorDetail("No matching book found");
+      return HardcoverClient::API_ERROR;
+    }
+    return HardcoverClient::OK;
+  }
+  if (err != HardcoverClient::OK) return err;
+
+  JsonDocument detailsDoc;
   const DeserializationError detailsJsonError =
       deserializeJson(detailsDoc, detailsBody.c_str(), DeserializationOption::Filter(detailsFilter));
   if (detailsJsonError) {
