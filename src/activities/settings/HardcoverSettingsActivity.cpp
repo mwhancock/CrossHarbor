@@ -21,11 +21,35 @@ const StrId kMenuItems[4] = {StrId::STR_HARDCOVER_API_KEY, StrId::STR_AUTHENTICA
                              StrId::STR_HARDCOVER_AUTO_SYNC_THRESHOLD, StrId::STR_CLEAR};
 constexpr uint8_t kAutoSyncThresholds[] = {1, 5, 10, 15};
 
-const char* hardcoverErrorMessage(HardcoverClient::Error error, char* buffer, const size_t bufferSize) {
-  if (!HardcoverClient::lastErrorDetail()[0]) {
-    return HardcoverClient::errorString(error);
+StrId hardcoverErrorLabelId(const HardcoverClient::Error error) {
+  switch (error) {
+    case HardcoverClient::NO_TOKEN:
+      return StrId::STR_HARDCOVER_ERROR_NO_TOKEN;
+    case HardcoverClient::LOW_MEMORY:
+      return StrId::STR_HARDCOVER_ERROR_LOW_MEMORY;
+    case HardcoverClient::NETWORK_ERROR:
+      return StrId::STR_HARDCOVER_ERROR_NETWORK;
+    case HardcoverClient::AUTH_FAILED:
+      return StrId::STR_HARDCOVER_ERROR_AUTH;
+    case HardcoverClient::RATE_LIMITED:
+      return StrId::STR_HARDCOVER_ERROR_RATE_LIMITED;
+    case HardcoverClient::SERVER_ERROR:
+      return StrId::STR_HARDCOVER_ERROR_SERVER;
+    case HardcoverClient::JSON_ERROR:
+      return StrId::STR_HARDCOVER_ERROR_JSON;
+    case HardcoverClient::API_ERROR:
+      return StrId::STR_HARDCOVER_ERROR_API;
+    case HardcoverClient::OK:
+      return StrId::STR_NONE_OPT;
+    default:
+      return StrId::STR_UNKNOWN_ERROR;
   }
-  snprintf(buffer, bufferSize, "%s: %s", HardcoverClient::errorString(error), HardcoverClient::lastErrorDetail());
+}
+
+const char* hardcoverErrorMessage(HardcoverClient::Error error, char* buffer, const size_t bufferSize) {
+  const char* label = I18N.get(hardcoverErrorLabelId(error));
+  if (!HardcoverClient::lastErrorDetail()[0]) return label;
+  snprintf(buffer, bufferSize, "%s: %s", label, HardcoverClient::lastErrorDetail());
   return buffer;
 }
 

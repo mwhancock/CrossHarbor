@@ -17,15 +17,15 @@ namespace {
 const char* statusLabel(int statusId) {
   switch (statusId) {
     case 1:
-      return "Want";
+      return tr(STR_HARDCOVER_STATUS_WANT);
     case 2:
-      return "Reading";
+      return tr(STR_HARDCOVER_STATUS_READING);
     case 3:
-      return "Read";
+      return tr(STR_HARDCOVER_STATUS_READ);
     case 4:
-      return "Paused";
+      return tr(STR_HARDCOVER_STATUS_PAUSED);
     case 5:
-      return "DNF";
+      return tr(STR_HARDCOVER_STATUS_DNF);
   }
   return "";
 }

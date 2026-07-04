@@ -16,7 +16,7 @@ constexpr char HARDCOVER_TOKEN_TXT[] = "/.crosspoint/hardcover_token.txt";
 constexpr size_t HARDCOVER_TOKEN_BUFFER_SIZE = 2048;
 
 char* trimTokenInPlace(char* raw) {
-  if (!raw) return "";
+  if (!raw) return nullptr;
 
   char* start = raw;
   while (*start == ' ' || *start == '\t' || *start == '\r' || *start == '\n') {
@@ -31,7 +31,10 @@ char* trimTokenInPlace(char* raw) {
   return start;
 }
 
-std::string trimToken(char* raw) { return trimTokenInPlace(raw); }
+std::string trimToken(char* raw) {
+  char* trimmed = trimTokenInPlace(raw);
+  return trimmed ? std::string(trimmed) : std::string();
+}
 
 bool startsWithBearer(const std::string& token) {
   constexpr char prefix[] = "Bearer ";
