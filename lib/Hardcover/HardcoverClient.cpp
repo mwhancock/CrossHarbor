@@ -744,11 +744,9 @@ HardcoverClient::Error HardcoverClient::searchBooks(const std::string& title, co
   outBooks.clear();
   char searchText[192];
   snprintf(searchText, sizeof(searchText), "%s%s%s", title.c_str(), author.empty() ? "" : " ", author.c_str());
-  if (title.empty()) {
-    HardcoverBookSearchResult book;
-    const Error err = searchBook(searchText, book);
-    if (err == OK) outBooks.push_back(book);
-    return err;
+  if (searchText[0] == '\0') {
+    setLastErrorDetail("Missing search text");
+    return API_ERROR;
   }
 
   char query[384];
