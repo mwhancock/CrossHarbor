@@ -48,6 +48,8 @@ void setLastErrorDetail(const char* prefix, int httpCode, int transportError) {
            transportError);
 }
 
+bool responseWasTooLarge() { return strstr(lastErrorDetailBuffer, "response too large") != nullptr; }
+
 void copyBodyPreview(const char* body, char* preview, const size_t previewSize) {
   if (!preview || previewSize == 0) return;
   size_t i = 0;
