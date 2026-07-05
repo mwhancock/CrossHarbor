@@ -1,10 +1,10 @@
-# CrossInk Hardcover Fork
+# CrossHarbor
 
-Personal firmware fork for the Xteink X3/X4 based on **[CrossInk](https://github.com/uxjulia/crossink)**, with selected features from **[CrossCover](https://github.com/StefanTsonev/CrossCover)** for integration with **[Hardcover.app](https://hardcover.app/)**.
+Community-focused firmware fork for the Xteink X3/X4 based on **[CrossInk](https://github.com/uxjulia/crossink)**, with selected ideas from **[CrossCover](https://github.com/StefanTsonev/CrossCover)** for integration with **[Hardcover.app](https://hardcover.app/)**.
 
 ## Goal and scope
 
-This fork aims to keep the upstream CrossInk reading experience and stability, while adding practical Hardcover tracking workflows for personal daily use.
+CrossHarbor aims to keep the upstream CrossInk reading experience and stability, while adding practical Hardcover tracking workflows for daily use.
 
 In scope:
 - Keep rebasing/syncing with mainline CrossInk.
@@ -17,7 +17,7 @@ Out of scope:
 
 ## What this fork includes
 
-### Core CrossInk improvements retained
+### Core reader improvements retained from CrossInk
 - Typography-focused defaults (ChareInk, Lexend Deca, Bitter) and extended font sizes.
 - Reader QoL additions (book options, reading stats, controls customization, bookmarks/clippings, etc.).
 
@@ -88,5 +88,4 @@ git submodule update --init --recursive
 - **CrossCover**: source reference for Hardcover integration patterns and related UX ideas.
 - **CrossPoint Reader community** and contributors across all upstream projects.
 
-This fork’s integration and iteration work was completed with assistance from **GitHub Copilot / AI tooling** (code exploration, implementation support, and debugging workflows).
-
+CrossHarbor’s integration and iteration work was completed with assistance from **GitHub Copilot / AI tooling** (code exploration, implementation support, and debugging workflows).
