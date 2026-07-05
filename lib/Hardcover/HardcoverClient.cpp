@@ -365,7 +365,11 @@ HardcoverClient::Error parseBookSearch(const char* body, const char* expectedTit
   detailsFilter["data"]["books"][0]["compilation"] = true;
   detailsFilter["errors"][0]["message"] = true;
   if (err == HardcoverClient::LOW_MEMORY && responseWasTooLarge() && idCount > 1) {
+    String singleBody;
+    JsonDocument singleDoc;
     for (JsonVariantConst idValue : ids) {
+      singleBody = "";
+      singleDoc.clear();
       const int singleId = parseBookId(idValue);
       if (singleId <= 0) continue;
 
@@ -374,11 +378,9 @@ HardcoverClient::Error parseBookSearch(const char* body, const char* expectedTit
                                        singleId);
       if (fallbackLen <= 0 || static_cast<size_t>(fallbackLen) >= sizeof(query)) return HardcoverClient::LOW_MEMORY;
 
-      String singleBody;
       const HardcoverClient::Error singleErr = postGraphql(query, singleBody);
       if (singleErr != HardcoverClient::OK) return singleErr;
 
-      JsonDocument singleDoc;
       const DeserializationError singleJsonError =
           deserializeJson(singleDoc, singleBody.c_str(), DeserializationOption::Filter(detailsFilter));
       if (singleJsonError) {
