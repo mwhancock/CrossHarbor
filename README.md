@@ -4,16 +4,26 @@ Community-focused firmware fork for the Xteink X3/X4 based on **[CrossInk](https
 
 ## Goal and scope
 
-CrossHarbor aims to keep the upstream CrossInk reading experience and stability, while adding practical Hardcover tracking workflows for daily use.
+CrossHarbor aims to build upon the CrossInk reading experience and stability, while adding practical Hardcover tracking workflows for daily use on constrained hardware.
 
 In scope:
-- Keep rebasing/syncing with mainline CrossInk.
 - Keep changes narrow, readable, and maintainable.
-- Add Hardcover features that are useful on-device without turning the project into a full social client.
+- Prioritize features that materially improve focused reading on-device.
+- Add lightweight Hardcover features (status/progress/rating/linking) that support reading flow without turning the firmware into a full social/discovery client.
 
 Out of scope:
 - Replacing the app architecture with a divergent codebase.
+- Feature additions that add heavy always-on networking or broad non-reading surface area.
 - Chasing every upstream difference from CrossCover.
+- Heavy Hardcover social/discovery surfaces that do not directly improve the core reading loop.
+
+## Roadmap (near-term)
+
+- Home-screen quick Hardcover status action (without entering the reader menu).
+- One-tap status cycle action for linked books (`Want → Reading → Paused → Read`).
+- Lightweight offline sync queue for failed Hardcover writes, with retry when connectivity returns.
+- Progress sync throttling to reduce network/memory churn while preserving useful tracking.
+- Clear sync feedback in-reader (`queued`, `synced`, `failed`) without adding extra UI complexity.
 
 ## What this fork includes
 

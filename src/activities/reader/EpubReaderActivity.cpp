@@ -1795,7 +1795,8 @@ void EpubReaderActivity::onExit() {
     LOG_INF("ERS", "Restoring WiFi connection that was disabled during indexing");
     WiFi.mode(WIFI_STA);
     WiFi.begin();
-    
+
+
     // Wait for connection (timeout 5s)
     uint32_t startMs = millis();
     while (WiFi.status() != WL_CONNECTED && (millis() - startMs) < 5000) {

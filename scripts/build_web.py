@@ -23,6 +23,7 @@ except NameError:
 WEB = os.path.join(ROOT, "web")
 OUT = os.path.join(ROOT, "src", "network", "html")
 JS_OUT = os.path.join(OUT, "js")
+JS_IN = os.path.join(ROOT, "include", "network", "html", "js")
 
 # slug -> (generated identifier, <title>, active nav, extra <head> markup)
 PAGES = {
@@ -113,6 +114,6 @@ emit_header(os.path.join(OUT, "LogoPng.generated.h"), "LogoPng", logo_png)
 print(f"{'LogoPng':18} {len(logo_png):>7}B raw")
 
 # jszip stays a separate cached asset; pre-minified, so just gzip it.
-jszip = read(JS_OUT, "jszip.min.js")
+jszip = read(JS_IN, "jszip.min.js")
 orig, comp = emit_gzip(os.path.join(JS_OUT, "jszip_minJs.generated.h"), "jszip_minJs", jszip)
 print(f"{'jszip_minJs':18} {orig:>7}B -> {comp:>6}B gz")

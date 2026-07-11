@@ -1,8 +1,28 @@
 # Changelog
 ## [Unreleased]
 
+## [v1.0.1] - 2026-07-10
+
+### Fixed
+- EPUB indexing crashes (OOM) by aggressively disabling WiFi when chapter caches are built to maximize heap memory on ESP32-C3.
+- `build_web.py` path resolver failure for `jszip.min.js` on the `main` branch.
+- `gen_i18n.py` translation scanner missing the `include/` directory, which stripped out settings translations.
+- PlatformIO build include path resolution for subdirectories of `include/`.
+
+
+## [v1.3.5] - 2026-07-05
+
+### Added
+- CrossHarbor boot branding now supports a custom anchor logo image rendered at startup.
+
 ### Changed
 - Hardcover in-reader `Mark Currently Reading` now toggles between `Reading` and `Paused` so pressing it again removes the book from the active now-reading state without extra menu actions.
+- Hardcover network and parsing paths were tightened to reduce temporary memory pressure on ESP32-C3 devices.
+- README branding/docs were updated for CrossHarbor and contribution onboarding.
+
+### Fixed
+- Hardcover auto-detect no longer collapses multi-match results to a single entry when falling back under low-memory conditions.
+- Boot logo orientation handling was updated for correct on-device rendering with the new custom anchor asset.
 
 ## [v1.3.4] - 2026-06-24
 
