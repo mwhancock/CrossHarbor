@@ -12,7 +12,7 @@ In scope:
 - Add lightweight Hardcover features (status/progress/rating/linking) that support reading flow without turning the firmware into a full social/discovery client.
 
 Out of scope:
-- Replacing the app architecture with a divergent codebase.
+- Full rewrites of core architecture.
 - Feature additions that add heavy always-on networking or broad non-reading surface area.
 - Chasing every upstream difference from CrossCover.
 - Heavy Hardcover social/discovery surfaces that do not directly improve the core reading loop.
