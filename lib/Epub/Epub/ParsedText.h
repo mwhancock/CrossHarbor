@@ -2,6 +2,7 @@
 
 #include <EpdFontFamily.h>
 
+#include <deque>
 #include <functional>
 #include <memory>
 #include <string>
@@ -14,7 +15,7 @@ class GfxRenderer;
 struct Arena;
 
 class ParsedText {
-  std::vector<std::string> words;
+  std::deque<std::string> words;
   std::vector<EpdFontFamily::Style> wordStyles;
   std::vector<bool> wordContinues;          // true = word attaches to previous (no space before it)
   std::vector<bool> wordNoSpaceBefore;      // true = may break before token, but no synthetic space when joined
@@ -28,7 +29,7 @@ class ParsedText {
   bool guideReadingEnabled;
   BlockStyle blockStyle;
   bool hasRtlWord;
-  std::vector<std::string> reorderedWordsScratch;
+  std::deque<std::string> reorderedWordsScratch;
   std::vector<EpdFontFamily::Style> reorderedStylesScratch;
   std::vector<uint16_t> reorderedWidthsScratch;
   std::vector<bool> reorderedContinuesScratch;
@@ -71,6 +72,7 @@ class ParsedText {
 
   void addWord(std::string word, EpdFontFamily::Style fontStyle, bool underline = false, bool attachToPrevious = false,
                bool backgroundBlack = false);
+  void reserve(size_t capacity);
   void setBlockStyle(const BlockStyle& blockStyle) { this->blockStyle = blockStyle; }
   BlockStyle& getBlockStyle() { return blockStyle; }
   size_t size() const { return words.size(); }

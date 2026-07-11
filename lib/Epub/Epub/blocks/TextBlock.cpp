@@ -278,7 +278,7 @@ bool TextBlock::serialize(FsFile& file) const {
 
 std::unique_ptr<TextBlock> TextBlock::deserialize(FsFile& file) {
   uint16_t wc;
-  std::vector<std::string> words;
+  std::deque<std::string> words;
   std::vector<int16_t> wordXpos;
   std::vector<EpdFontFamily::Style> wordStyles;
   std::vector<uint8_t> wordBionicBoundary;

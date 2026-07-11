@@ -494,6 +494,7 @@ void ChapterHtmlSlimParser::startNewTextBlock(const BlockStyle& blockStyle) {
     lowMemoryAbort = true;
     return;
   }
+  currentTextBlock->reserve(32);
   wordsExtractedInBlock = 0;
 }
 

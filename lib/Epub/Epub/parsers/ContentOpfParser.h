@@ -39,7 +39,7 @@ class ContentOpfParser final : public Print {
     uint16_t idLen;       // length for collision reduction
     uint32_t fileOffset;  // offset in .items.bin
   };
-  std::deque<ItemIndexEntry> itemIndex;
+  std::vector<ItemIndexEntry> itemIndex;
 
   // FNV-1a hash function
   static uint64_t fnvHash(const char* s, size_t len) {

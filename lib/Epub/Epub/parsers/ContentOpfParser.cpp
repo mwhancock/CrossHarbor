@@ -42,6 +42,10 @@ bool ContentOpfParser::setup() {
   XML_SetUserData(parser, this);
   XML_SetElementHandler(parser, startElement, endElement);
   XML_SetCharacterDataHandler(parser, characterData);
+  
+  itemIndex.reserve(256);
+  cssFiles.reserve(16);
+  
   return true;
 }
 

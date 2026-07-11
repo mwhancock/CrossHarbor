@@ -90,8 +90,12 @@ bool isSupportedBrowserFile(std::string_view filename) {
          FsHelpers::hasBmpExtension(filename) || FsHelpers::hasPngExtension(filename);
 }
 
+bool isSystemHiddenDirectory(std::string_view filename) {
+  return filename == ".crosspoint" || filename == ".fonts" || filename == ".Trash-1000";
+}
+
 bool acceptCommon(const char* name, bool isDir) {
-  if (isMacOSMetadataEntry(name) || isWindowsMetadataEntry(name) || (!SETTINGS.showHiddenFiles && name[0] == '.')) {
+  if (isSystemHiddenDirectory(name) || isMacOSMetadataEntry(name) || isWindowsMetadataEntry(name) || (!SETTINGS.showHiddenFiles && name[0] == '.')) {
     return false;
   }
   return isDir || isSupportedBrowserFile(name);

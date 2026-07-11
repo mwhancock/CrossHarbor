@@ -14,6 +14,7 @@
 #include <esp_crt_bundle.h>
 #include <esp_err.h>
 #include <esp_http_client.h>
+#include <esp_sntp.h>
 #endif
 
 #include <cctype>
@@ -567,6 +568,31 @@ HardcoverClient::Error postGraphql(const char* query, String& responseBody) {
     return HardcoverClient::LOW_MEMORY;
   }
 
+  time_t now = time(nullptr);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);
+  if (timeinfo.tm_year < (2024 - 1900)) {
+    LOG_INF("HDC", "System time is before 2024, syncing NTP for TLS...");
+    if (esp_sntp_enabled()) {
+      esp_sntp_stop();
+    }
+    esp_sntp_setoperatingmode(ESP_SNTP_OPMODE_POLL);
+    esp_sntp_setservername(0, "pool.ntp.org");
+    esp_sntp_init();
+
+    int retry = 0;
+    while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED && retry < 50) {
+      vTaskDelay(100 / portTICK_PERIOD_MS);
+      retry++;
+    }
+    if (retry < 50) {
+      LOG_DBG("HDC", "NTP time synced");
+    } else {
+      LOG_ERR("HDC", "NTP sync timeout");
+    }
+    esp_sntp_stop();
+  }
+
   ResponseBuffer response;
   esp_http_client_config_t config = {};
   config.url = API_URL;
@@ -704,7 +730,7 @@ HardcoverClient::Error HardcoverClient::updateProgress(int bookId, int progressP
   char query[320];
   if (userBook.readId > 0) {
     snprintf(query, sizeof(query),
-             "mutation { update_user_book_read(id: %d, object: {progress_pages: %d}) { id } }",
+             "mutation { update_user_book_read(id: %d, user_book_read: {progress_pages: %d}) { id } }",
              userBook.readId, progressPages);
   } else if (userBook.editionId > 0) {
     snprintf(query, sizeof(query),
@@ -795,7 +821,11 @@ HardcoverClient::Error HardcoverClient::searchBooks(const std::string& title, co
                                                     const int limit) {
   outBooks.clear();
   char searchText[192];
-  snprintf(searchText, sizeof(searchText), "%s%s%s", title.c_str(), author.empty() ? "" : " ", author.c_str());
+  if (author.empty()) {
+    snprintf(searchText, sizeof(searchText), "%s", title.c_str());
+  } else {
+    snprintf(searchText, sizeof(searchText), "%s %s", title.c_str(), author.c_str());
+  }
   if (searchText[0] == '\0') {
     setLastErrorDetail("Missing search text");
     return API_ERROR;
@@ -808,7 +838,7 @@ HardcoverClient::Error HardcoverClient::searchBooks(const std::string& title, co
   pos = static_cast<size_t>(prefixLen);
   if (!appendGraphqlStringLiteral(query, sizeof(query), pos, searchText)) return LOW_MEMORY;
   const int suffixLen = snprintf(query + pos, sizeof(query) - pos,
-                                 ", query_type: \"Book\", per_page: 5, page: 1) { ids } }");
+                                 ", query_type: \"Book\", per_page: 15, page: 1) { ids } }");
   if (suffixLen <= 0 || static_cast<size_t>(suffixLen) >= sizeof(query) - pos) return LOW_MEMORY;
 
   String body;

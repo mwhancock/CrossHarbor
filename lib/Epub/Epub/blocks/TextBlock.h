@@ -9,10 +9,12 @@
 #include "Block.h"
 #include "BlockStyle.h"
 
+#include <deque>
+
 // Represents a line of text on a page
 class TextBlock final : public Block {
  private:
-  std::vector<std::string> words;
+  std::deque<std::string> words;
   std::vector<int16_t> wordXpos;
   std::vector<EpdFontFamily::Style> wordStyles;
   // Per-word bionic boundary: N > 0 means the first N bytes of words[i] are rendered bold,
@@ -36,7 +38,7 @@ class TextBlock final : public Block {
   static constexpr uint8_t WORD_FLAG_BACKGROUND_BLACK = 0x01;
   static constexpr uint8_t WORD_FLAG_INSERTED_HYPHEN = 0x02;
 
-  explicit TextBlock(std::vector<std::string> words, std::vector<int16_t> word_xpos,
+  explicit TextBlock(std::deque<std::string> words, std::vector<int16_t> word_xpos,
                      std::vector<EpdFontFamily::Style> word_styles, std::vector<uint8_t> bionic_boundary,
                      std::vector<uint16_t> bionic_suffix_x, std::vector<uint16_t> guide_dot_x_offset,
                      std::vector<uint8_t> background_black, const BlockStyle& blockStyle = BlockStyle())
@@ -51,7 +53,7 @@ class TextBlock final : public Block {
   ~TextBlock() override = default;
   void setBlockStyle(const BlockStyle& blockStyle) { this->blockStyle = blockStyle; }
   const BlockStyle& getBlockStyle() const { return blockStyle; }
-  const std::vector<std::string>& getWords() const { return words; }
+  const std::deque<std::string>& getWords() const { return words; }
   const std::vector<int16_t>& getWordXpos() const { return wordXpos; }
   const std::vector<EpdFontFamily::Style>& getWordStyles() const { return wordStyles; }
   bool wordEndsWithInsertedHyphen(size_t index) const {

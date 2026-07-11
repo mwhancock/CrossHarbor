@@ -100,7 +100,7 @@ bool applyBidiVisual(const char* utf8, std::string& out, int paragraphLevel) {
   return true;
 }
 
-bool computeVisualWordOrder(const std::vector<std::string>& words, bool paragraphIsRtl,
+bool computeVisualWordOrder(const std::deque<std::string>& words, bool paragraphIsRtl,
                             std::vector<uint16_t>& visualOrder) {
   visualOrder.clear();
   const size_t nWords = words.size();

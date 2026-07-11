@@ -498,31 +498,7 @@ void ParsedText::addWord(std::string word, const EpdFontFamily::Style fontStyle,
 
   // --- FOCUS READING LOGIC BELOW ---
 
-  // Pre-reserve capacity to prevent mid-word heap reallocations.
-  size_t maxPossibleNewTokens = word.length();
-  size_t requiredSize = words.size() + maxPossibleNewTokens;
-
-  if (words.capacity() < requiredSize) {
-    // Emulate standard geometric growth (doubling) to ensure we don't reallocate on every word.
-    size_t newCapacity = words.capacity() * 2;
-
-    // Ensure the doubled capacity is actually enough for this specific word
-    if (newCapacity < requiredSize) {
-      newCapacity = requiredSize;
-    }
-    // Set a sensible minimum starting size so the first few words don't trigger tiny reallocations
-    if (newCapacity < 16) {
-      newCapacity = 16;
-    }
-
-    words.reserve(newCapacity);
-    wordStyles.reserve(newCapacity);
-    wordContinues.reserve(newCapacity);
-    wordNoSpaceBefore.reserve(newCapacity);
-    wordBionicBoundary.reserve(newCapacity);
-    wordGuideDotBefore.reserve(newCapacity);
-    wordBackgroundBlack.reserve(newCapacity);
-  }
+  size_t requiredSize = words.size() + word.length();
 
   // Lambda helper to process and push individual sub-segments of the string
   // Use std::string_view to avoid heap allocations when slicing
@@ -1066,13 +1042,12 @@ bool ParsedText::extractLine(Arena& scratchArena, const size_t breakIndex, const
 
   const int firstLineIndent = resolveFirstLineIndent(breakIndex == 0, renderer, fontId);
 
-  std::vector<std::string> lineWords;
+  std::deque<std::string> lineWords;
   std::vector<EpdFontFamily::Style> lineWordStyles;
   std::vector<uint16_t> lineWordWidths;
   std::vector<uint8_t> lineBionicBoundary;
   std::vector<bool> lineGuideDotBefore;
   std::vector<uint8_t> lineBackgroundBlack;
-  lineWords.reserve(lineWordCount);
   lineWordStyles.reserve(lineWordCount);
   lineWordWidths.reserve(lineWordCount);
   lineBionicBoundary.reserve(lineWordCount);
@@ -1149,7 +1124,6 @@ bool ParsedText::extractLine(Arena& scratchArena, const size_t breakIndex, const
     reorderedBionicBoundaryScratch.clear();
     reorderedGuideDotBeforeScratch.clear();
     reorderedBackgroundBlackScratch.clear();
-    reorderedWordsScratch.reserve(visualOrderScratch.size());
     reorderedStylesScratch.reserve(visualOrderScratch.size());
     reorderedWidthsScratch.reserve(visualOrderScratch.size());
     reorderedContinuesScratch.reserve(visualOrderScratch.size());
@@ -1333,14 +1307,14 @@ bool ParsedText::extractLine(Arena& scratchArena, const size_t breakIndex, const
     }
   }
 
-  std::vector<std::string> outWords;
+  std::deque<std::string> outWords;
   std::vector<int16_t> outXPos;
   std::vector<EpdFontFamily::Style> outStyles;
   std::vector<uint8_t> outBoundaries;
   std::vector<uint16_t> outSuffixX;
   std::vector<uint16_t> outGuideDotXOffset;
   std::vector<uint8_t> outBackgroundBlack;
-  outWords.reserve(lineWordCount);
+
   outXPos.reserve(lineWordCount);
   outStyles.reserve(lineWordCount);
   if (lineHasBionicSplit) {
@@ -1385,4 +1359,13 @@ bool ParsedText::extractLine(Arena& scratchArena, const size_t breakIndex, const
                                           std::move(outBoundaries), std::move(outSuffixX),
                                           std::move(outGuideDotXOffset), std::move(outBackgroundBlack), blockStyle));
   return true;
+}
+
+void ParsedText::reserve(size_t capacity) {
+  wordStyles.reserve(capacity);
+  wordContinues.reserve(capacity);
+  wordNoSpaceBefore.reserve(capacity);
+  wordBionicBoundary.reserve(capacity);
+  wordGuideDotBefore.reserve(capacity);
+  wordBackgroundBlack.reserve(capacity);
 }

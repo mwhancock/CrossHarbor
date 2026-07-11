@@ -1791,6 +1791,19 @@ void EpubReaderActivity::onExit() {
   BOOKMARKS.unload();
   CLIPPINGS.unload();
   section.reset();
+  if (wifiWasConnectedBeforeIndex && WiFi.status() != WL_CONNECTED) {
+    LOG_INF("ERS", "Restoring WiFi connection that was disabled during indexing");
+    WiFi.mode(WIFI_STA);
+    WiFi.begin();
+    
+    // Wait for connection (timeout 5s)
+    uint32_t startMs = millis();
+    while (WiFi.status() != WL_CONNECTED && (millis() - startMs) < 5000) {
+      delay(100);
+    }
+    LOG_INF("ERS", "WiFi restore complete (status=%d)", static_cast<int>(WiFi.status()));
+  }
+
   if (epub) {
     syncHardcoverOnClose(hardcoverProgressPercent);
   }
@@ -3658,6 +3671,14 @@ void EpubReaderActivity::render(RenderLock&& lock) {
 
     if (!loadedSection) {
       LOG_DBG("ERS", "Cache not found, building... (free=%u, maxAlloc=%u)", ESP.getFreeHeap(), ESP.getMaxAllocHeap());
+
+      if (WiFi.status() == WL_CONNECTED || WiFi.getMode() != WIFI_OFF) {
+        LOG_INF("ERS", "Disabling WiFi to free heap for EPUB indexing");
+        wifiWasConnectedBeforeIndex = true;
+        WiFi.disconnect(false);
+        delay(30);
+        WiFi.mode(WIFI_OFF);
+      }
 
       GUI.drawPopup(renderer, tr(STR_INDEXING));
 

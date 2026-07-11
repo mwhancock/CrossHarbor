@@ -237,7 +237,12 @@ class ChapterHtmlSlimParser {
         previewMaxPages(previewMaxPages),
         contentBase(contentBase),
         imageBasePath(imageBasePath),
-        tocAnchors(std::move(tocAnchors)) {}
+        tocAnchors(std::move(tocAnchors)) {
+    ancestorStack_.reserve(64);
+    anchorData.reserve(32);
+    pendingFootnotes.reserve(32);
+    pendingPublisherPageMarkers.reserve(16);
+  }
 
   ~ChapterHtmlSlimParser() = default;
   bool parseAndBuildPages();

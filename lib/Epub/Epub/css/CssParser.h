@@ -53,7 +53,10 @@ class CssParser {
   static constexpr size_t MAX_DESCENDANT_RULES = 100;
   static constexpr size_t CSS_INDEX_BYTES_PER_RULE = 8;
 
-  explicit CssParser(std::string cachePath) : cachePath(std::move(cachePath)) {}
+  CssParser(const std::string& cachePath = "") : cachePath(cachePath) {
+    descendantRules_.reserve(128);
+    cacheRuleOffsets_.reserve(128);
+  }
   ~CssParser() = default;
 
   // Non-copyable
