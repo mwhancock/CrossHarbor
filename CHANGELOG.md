@@ -1,6 +1,15 @@
 # Changelog
 ## [Unreleased]
 
+## [v1.0.1] - 2026-07-10
+
+### Fixed
+- EPUB indexing crashes (OOM) by aggressively disabling WiFi when chapter caches are built to maximize heap memory on ESP32-C3.
+- `build_web.py` path resolver failure for `jszip.min.js` on the `main` branch.
+- `gen_i18n.py` translation scanner missing the `include/` directory, which stripped out settings translations.
+- PlatformIO build include path resolution for subdirectories of `include/`.
+
+
 ## [v1.3.5] - 2026-07-05
 
 ### Added
